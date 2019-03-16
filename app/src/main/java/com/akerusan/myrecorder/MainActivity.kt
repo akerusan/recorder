@@ -3,6 +3,8 @@ package com.akerusan.myrecorder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -13,10 +15,15 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.PowerManager
 import android.support.v4.app.ActivityCompat
+import android.support.v4.app.DialogFragment
 import android.support.v4.content.ContextCompat
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
+import kotlin.coroutines.coroutineContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,11 +57,15 @@ class MainActivity : AppCompatActivity() {
         mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
         mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        mediaRecorder?.setOutputFile(output)
 
         mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayer?.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK);
 
+
+        val showDialog = findViewById<Button>(R.id.dialog)
+        showDialog.setOnClickListener{
+            showDialog()
+        }
 
         button_start_recording.setOnClickListener {
             startRecording()
@@ -73,8 +84,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun showDialog(){
+            val mBuilder: AlertDialog.Builder  = AlertDialog.Builder(this)
+            val mView: View = layoutInflater.inflate(R.layout.alert_dialog, null)
+            var text: EditText = mView.findViewById(R.id.text)
+
+            mBuilder.setView(mView)
+            val dialog: AlertDialog = mBuilder.create()
+            dialog.show()
+    }
+
     private fun startRecording() {
         try {
+            mediaRecorder?.setOutputFile(output)
             mediaRecorder?.prepare()
             mediaRecorder?.start()
             state = true
