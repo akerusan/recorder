@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, permissions,0)
         }
 
+        // GIT TEST
+
         mediaRecorder = MediaRecorder()
         mediaPlayer = MediaPlayer()
         output = Environment.getExternalStorageDirectory().absolutePath + "/recording.mp3"
