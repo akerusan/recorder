@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:paddingTop="20dp"
         android:paddingBottom="10dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/ic_button"
+        android:backgroundTint="@color/colorPrimary"
         android:orientation="vertical"
         android:gravity="center">
 

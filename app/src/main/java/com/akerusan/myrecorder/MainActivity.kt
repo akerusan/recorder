@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private var mediaPlayer: MediaPlayer? = null
     private var state: Boolean = false
     private var recordingStopped: Boolean = false
+    private var fileName:String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +47,11 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, permissions,0)
         }
 
+        // Recorder
         mediaRecorder = MediaRecorder()
+        // Player
         mediaPlayer = MediaPlayer()
+
         output = Environment.getExternalStorageDirectory().absolutePath + "/"
 
         mediaRecorder?.setOutputFile(output + "sample.mp3")
@@ -55,45 +59,11 @@ class MainActivity : AppCompatActivity() {
         mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
 
-        mediaPlayer?.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer?.setWakeMode(applicationContext, PowerManager.PARTIAL_WAKE_LOCK);
-
-        button_start_recording.setOnClickListener {
-            startRecording()
-        }
-
-        button_stop_recording.setOnClickListener{
-            stopRecording()
-        }
-
-        button_pause_recording.setOnClickListener {
-            pauseRecording()
-        }
-
-        button_play.setOnClickListener {
-            playRecording()
-        }
-    }
-
-
-    private fun renameAudioFile(){
-            val mBuilder: AlertDialog.Builder  = AlertDialog.Builder(this)
-
-            val mView: View = layoutInflater.inflate(R.layout.alert_dialog, null)
-            val text: EditText = mView.findViewById(R.id.text)
-            val submit: Button = mView.findViewById(R.id.submit)
-            mBuilder.setView(mView)
-            val dialog: AlertDialog = mBuilder.create()
-
-            submit.setOnClickListener{
-                val fileName = text.text.toString()
-                val newFile = File(output, "$fileName.mp3")
-                val oldFile = File(output, "sample.mp3")
-                oldFile.renameTo(newFile)
-
-                dialog.dismiss()
-            }
-            dialog.show()
+        // Button Listeners
+        button_start_recording.setOnClickListener { startRecording() }
+        button_stop_recording.setOnClickListener{ stopRecording() }
+        button_pause_recording.setOnClickListener { pauseRecording() }
+        button_play.setOnClickListener { playRecording() }
     }
 
     private fun startRecording() {
@@ -138,18 +108,39 @@ class MainActivity : AppCompatActivity() {
             mediaRecorder?.stop()
             mediaRecorder?.release()
             state = false
-
             renameAudioFile()
         }else{
             Toast.makeText(this, "You are not recording right now!", Toast.LENGTH_SHORT).show()
         }
     }
 
+    private fun renameAudioFile(){
+        val mBuilder: AlertDialog.Builder  = AlertDialog.Builder(this)
+
+        val mView: View = layoutInflater.inflate(R.layout.alert_dialog, null)
+        val text: EditText = mView.findViewById(R.id.text)
+        val submit: Button = mView.findViewById(R.id.submit)
+        mBuilder.setView(mView)
+        val dialog: AlertDialog = mBuilder.create()
+
+        submit.setOnClickListener{
+
+            fileName = text.text.toString()
+            val newFile = File(output, "$fileName.mp3")
+            val oldFile = File(output, "sample.mp3")
+            oldFile.renameTo(newFile)
+
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
     private fun playRecording(){
         if(!mediaPlayer!!.isPlaying && !state){
             Toast.makeText(this,"Playing!", Toast.LENGTH_SHORT).show()
+            mediaPlayer?.setDataSource("$output$fileName.mp3")
             mediaPlayer!!.prepare()
-            mediaPlayer?.setDataSource(output)
             mediaPlayer!!.start()
         }
     }
